@@ -13,10 +13,10 @@ const navigation = [
     href: "/unseal",
   },
 
-  {
-    name: "Deploy",
-    href: "/deploy",
-  },
+  // {
+  //   name: "Deploy",
+  //   href: "/deploy",
+  // },
   {
     name: "GitHub",
     href: "https://github.com/chronark/envshare",
