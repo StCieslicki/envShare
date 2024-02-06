@@ -20,13 +20,15 @@ export default function Home() {
 
   const [link, setLink] = useState("");
 
+  const [pin, setPin] = useState("");
+
   const onSubmit = async () => {
     try {
       setError("");
       setLink("");
       setLoading(true);
 
-      const { encrypted, iv, key } = await encrypt(text);
+      const { encrypted, iv, key } = await encrypt(text, pin);
 
       const { id } = (await fetch("/api/v1/store", {
         method: "POST",
@@ -38,7 +40,7 @@ export default function Home() {
         }),
       }).then((r) => r.json())) as { id: string };
 
-      const compositeKey = encodeCompositeKey(LATEST_KEY_VERSION, id, key);
+      const compositeKey = encodeCompositeKey(LATEST_KEY_VERSION, id, key, Boolean(pin));
 
       const url = new URL(window.location.href);
       url.pathname = "/unseal";
@@ -149,6 +151,20 @@ export default function Home() {
 
             <div className="w-full h-16 px-3 py-2 duration-150 border rounded sm:w-2/5 hover:border-zinc-100/80 border-zinc-600 focus-within:border-zinc-100/80 focus-within:ring-0 ">
               <label htmlFor="reads" className="block text-xs font-medium text-zinc-100">
+                PIN
+              </label>
+              <input
+                  type="text"
+                  name="pin"
+                  id="pin"
+                  className="w-full p-0 text-base bg-transparent border-0 appearance-none text-zinc-100 placeholder-zinc-500 focus:ring-0 sm:text-sm"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+              />
+            </div>
+
+            <div className="w-full h-16 px-3 py-2 duration-150 border rounded sm:w-2/5 hover:border-zinc-100/80 border-zinc-600 focus-within:border-zinc-100/80 focus-within:ring-0 ">
+              <label htmlFor="reads" className="block text-xs font-medium text-zinc-100">
                 READS
               </label>
               <input
@@ -202,6 +218,13 @@ export default function Home() {
 
           <div className="mt-8">
             <ul className="space-y-2 text-xs text-zinc-500">
+              <li>
+                <p>
+                  <span className="font-semibold text-zinc-400">PIN:</span> A secret pin that allows you to decrypt your
+                  message, pass it to the recipient through another communication channel, such as a phone or sms, or
+                  other messenger. Leave blank if you do not want additional security.
+                </p>
+              </li>
               <li>
                 <p>
                   <span className="font-semibold text-zinc-400">Reads:</span> The number of reads determines how often

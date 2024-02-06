@@ -13,7 +13,11 @@ export default function Unseal() {
   const [compositeKey, setCompositeKey] = useState<string>("");
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setCompositeKey(window.location.hash.replace(/^#/, ""));
+      const hash = window.location.hash.replace(/^#/, "");
+      const { pin: isPin } = decodeCompositeKey(hash);
+
+      setCompositeKey(hash);
+      setPinInput(isPin);
     }
   }, []);
 
@@ -22,6 +26,8 @@ export default function Unseal() {
   const [remainingReads, setRemainingReads] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [pinInput, setPinInput] = useState(false);
+  const [pin, setPin] = useState("");
 
   const onSubmit = async () => {
     try {
@@ -45,7 +51,13 @@ export default function Unseal() {
       };
       setRemainingReads(json.remainingReads);
 
-      const decrypted = await decrypt(json.encrypted, encryptionKey, json.iv, version);
+      const decrypted = await decrypt(json.encrypted, encryptionKey, json.iv, version, pin);
+
+      if (!decrypted) {
+        if (pinInput) {
+          setError('Decryption error, wrong pin?');
+        }
+      }
 
       setText(decrypted);
     } catch (e) {
@@ -128,6 +140,22 @@ export default function Unseal() {
           }}
         >
           <Title>Decrypt a document</Title>
+
+          {pinInput &&
+            <div className="w-full h-16 px-3 py-2 duration-150 border rounded sm:w-2/5 hover:border-zinc-100/80 border-zinc-600 focus-within:border-zinc-100/80 focus-within:ring-0 ">
+            <label htmlFor="reads" className="block text-xs font-medium text-zinc-100">
+              PIN
+            </label>
+            <input
+                type="text"
+                name="pin"
+                id="pin"
+                className="w-full p-0 text-base bg-transparent border-0 appearance-none text-zinc-100 placeholder-zinc-500 focus:ring-0 sm:text-sm"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+            />
+          </div>
+          }
 
           <div className="px-3 py-2 mt-8 border rounded border-zinc-600 focus-within:border-zinc-100/80 focus-within:ring-0 ">
             <label htmlFor="id" className="block text-xs font-medium text-zinc-100">
