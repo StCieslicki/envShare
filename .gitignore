@@ -254,3 +254,6 @@ Temporary Items
 .apdisk
 
 .idea
+.gitsecret/keys/random_seed
+!*.secret
+trivy.log
