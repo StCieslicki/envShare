@@ -11,6 +11,7 @@ import { ErrorMessage } from "@components/error";
 
 export default function Unseal() {
   const [compositeKey, setCompositeKey] = useState<string>("");
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace(/^#/, "");

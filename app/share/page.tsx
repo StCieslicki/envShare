@@ -1,6 +1,6 @@
 "use client";
 import { toBase58 } from "util/base58";
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { Cog6ToothIcon, ClipboardDocumentIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import { Title } from "@components/title";
 import { encrypt } from "pkg/encryption";
@@ -21,6 +21,27 @@ export default function Home() {
   const [link, setLink] = useState("");
 
   const [pin, setPin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+
+      const queryPin: string = params.get('pin') as string;
+      if (queryPin) {
+        setPin(queryPin);
+      }
+
+      const queryReads: number = Number(params.get('reads'));
+      if (queryReads) {
+        setReads(queryReads);
+      }
+
+      const queryTtl: number = Number(params.get('ttl'));
+      if (queryTtl) {
+        setTtl(queryTtl);
+      }
+    }
+  }, []);
 
   const onSubmit = async () => {
     try {
