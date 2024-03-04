@@ -66,6 +66,7 @@ export default function Home() {
       const url = new URL(window.location.href);
       url.pathname = "/unseal";
       url.hash = compositeKey;
+      url.search = '';
       setCopied(false);
       setLink(url.toString());
     } catch (e) {
