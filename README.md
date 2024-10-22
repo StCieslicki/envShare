@@ -1,7 +1,7 @@
 <div align="center">
     <h1 align="center">EnvShare</h1>
     <h5>Share Environment Variables Securely</h5>
-</div>
+</div> 
 
 <div align="center">
   <a href="https://envshare.dev">envshare.dev</a>
